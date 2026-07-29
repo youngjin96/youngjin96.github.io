@@ -1,0 +1,98 @@
+name: 빌드 & GitHub Pages 배포
+
+# 세 가지 경우에 돌아간다.
+#  1) main 에 푸시할 때
+#  2) 매주 토요일 추첨 직후 (KST 일요일 00:20 = 토요일 15:20 UTC) — 새 회차 수집 후 배포
+#  3) Actions 탭에서 수동 실행
+#
+# 데이터 수집과 배포를 한 워크플로에 둔 이유:
+# GITHUB_TOKEN 으로 push 하면 다른 워크플로가 트리거되지 않아서,
+# "수집 워크플로 → 배포 워크플로" 로 나누면 배포가 영영 안 돈다.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "20 15 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: write # 새 회차 커밋용
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # 예약 실행 / 수동 실행일 때만 최신 회차를 받아온다.
+      - name: 최신 회차 수집
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: node scripts/fetch-draws.mjs
+
+      - name: 새 회차 커밋
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          if git diff --quiet data/draws.json; then
+            echo "새 회차 없음 — 커밋 생략"
+            exit 0
+          fi
+          LATEST=$(node -e "const d=require('./data/draws.json');console.log(d.at(-1).round)")
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/draws.json
+          git commit -m "chore: ${LATEST}회 당첨번호 반영"
+          git push
+
+      - name: 빌드 (정적 export)
+        env:
+          # ── 배포 주소 (저장소 Settings > Secrets and variables > Actions > Variables) ──
+          # 커스텀 도메인:             NEXT_PUBLIC_SITE_URL=https://내도메인.kr        BASE_PATH 비움
+          # username.github.io 저장소: NEXT_PUBLIC_SITE_URL=https://username.github.io BASE_PATH 비움
+          # 프로젝트 저장소:           NEXT_PUBLIC_SITE_URL=https://username.github.io BASE_PATH=/저장소명
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
+          # ── 선택 ────────────────────────────────────────────────────────────
+          NEXT_PUBLIC_ADSENSE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_ADSENSE_CLIENT_ID }}
+          NEXT_PUBLIC_AD_SLOT_TOP: ${{ vars.NEXT_PUBLIC_AD_SLOT_TOP }}
+          NEXT_PUBLIC_AD_SLOT_MID: ${{ vars.NEXT_PUBLIC_AD_SLOT_MID }}
+          NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}
+          NEXT_PUBLIC_GA_ID: ${{ vars.NEXT_PUBLIC_GA_ID }}
+        run: npm run build
+
+      - name: 산출물 점검
+        run: |
+          test -f out/index.html || { echo "out/index.html 없음"; exit 1; }
+          test -f out/404.html   || { echo "out/404.html 없음 — Pages 404 처리 불가"; exit 1; }
+          test -f out/.nojekyll  || { echo "out/.nojekyll 없음 — _next 폴더가 무시됨"; exit 1; }
+          test -f out/og.png     || { echo "out/og.png 없음 — 공유 미리보기 깨짐"; exit 1; }
+          test -s out/sitemap.xml || { echo "sitemap.xml 비어 있음"; exit 1; }
+          echo "HTML $(find out -name '*.html' | wc -l)개 / sitemap $(grep -c '<url>' out/sitemap.xml)개 URL"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

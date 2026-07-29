@@ -5,8 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "update-data": "node scripts/fetch-draws.mjs",
+    "update-data:full": "node scripts/fetch-draws.mjs --full",
+    "prebuild": "node scripts/gen-images.mjs && node scripts/gen-ads-txt.mjs",
+    "preview": "npx --yes serve out"
   },
   "dependencies": {
     "next": "16.2.12",
