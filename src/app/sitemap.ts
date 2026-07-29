@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { draws, latestDraw } from "@/lib/draws";
 import { ALL_NUMBERS } from "@/lib/patterns";
 import { guides } from "@/lib/guides";
+import { allSigunguPairs, sidoNames } from "@/lib/stores";
 import { absoluteUrl } from "@/site.config";
 
 // output: "export" 에서 정적 파일로 뽑히도록 명시
@@ -53,6 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: "weekly",
         priority: 0.7,
       },
+      { url: absoluteUrl("/stores"), changeFrequency: "weekly", priority: 0.9 },
       { url: absoluteUrl("/guide"), changeFrequency: "monthly", priority: 0.6 },
       { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.3 },
       { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.3 },
@@ -82,6 +84,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: d.round > latestDraw.round - 12 ? 0.8 : 0.4,
   }));
 
+  const sidoPages: MetadataRoute.Sitemap = sidoNames.map((name) => ({
+    url: absoluteUrl(`/stores/${encodeURIComponent(name)}`),
+    lastModified: lastDrawDate,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
+  const sigunguPages: MetadataRoute.Sitemap = allSigunguPairs.map((p) => ({
+    url: absoluteUrl(
+      `/stores/${encodeURIComponent(p.sido)}/${encodeURIComponent(p.sigungu)}`,
+    ),
+    lastModified: lastDrawDate,
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
   const guidePages: MetadataRoute.Sitemap = guides.map((g) => ({
     url: absoluteUrl(`/guide/${g.slug}`),
     lastModified: new Date(`${g.updated}T00:00:00+09:00`),
@@ -92,6 +110,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...staticPages,
     ...numberPages,
+    ...sidoPages,
+    ...sigunguPages,
     ...guidePages,
     ...yearPages,
     ...roundPages,

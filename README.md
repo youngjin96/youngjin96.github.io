@@ -4,7 +4,7 @@
 번호 추천을 제공하는 사이트입니다. **검색 유입 극대화**를 전제로 만들었습니다.
 
 - Next.js 16 (App Router) + TypeScript + Tailwind CSS v4
-- **정적 export** — 서버 없이 GitHub Pages 로 배포. 현재 **1,325 페이지**
+- **정적 export** — 서버 없이 GitHub Pages 로 배포. 현재 **1,604 페이지**
 - 런타임 DB·API 호출 없음 (데이터는 `data/draws.json` 하나)
 
 ## 현재 배포
@@ -124,11 +124,14 @@ npm run update-data:full   # 1회차부터 전부 다시 수집
 | `/stats/number/[n]` | 45 | `로또 7번 통계` |
 | `/recommend` | 1 | 로또 번호 추천, 로또 번호 생성기 |
 | `/guide/[slug]` | 5 | 로또 세금, 당첨금 수령 방법, 당첨 확률 |
+| `/stores` | 1 | 로또 명당, 1등 배출 판매점 |
+| `/stores/[sido]` | 17 | `서울 로또 명당`, `경기 로또 명당` |
+| `/stores/[sido]/[sigungu]` | 260 | `강남구 로또 명당` (지역 롱테일) |
 
 ## SEO 구현 내용
 
 - 페이지별 `title` / `description` / `canonical` — 회차·번호별로 전부 다름
-- `sitemap.xml` 자동 생성 (1,322 URL, 최신 회차 우선순위 상향)
+- `sitemap.xml` 자동 생성 (1,600 URL, 최신 회차 우선순위 상향)
 - `robots.txt` — Mediapartners-Google / AdsBot-Google 명시 허용
 - 구조화 데이터: `WebSite`, `BreadcrumbList`, `Article`, `FAQPage`
 - OG 이미지 — 최신 당첨번호가 그려진 카드를 빌드 때 `public/og.png` 로 생성
@@ -175,9 +178,11 @@ npm run update-data:full   # 1회차부터 전부 다시 수집
 ## 구조
 
 ```
-data/draws.json          # 전 회차 데이터 (유일한 데이터 소스, 커밋 대상)
+data/draws.json          # 전 회차 당첨번호 (커밋 대상)
+data/stores.json         # 당첨 판매점 마스터 + 배출 이력 (커밋 대상)
 scripts/
-  fetch-draws.mjs        # 동행복권 수집기
+  fetch-draws.mjs        # 동행복권 회차 수집기
+  fetch-stores.mjs       # 당첨 판매점(명당) 수집기
   gen-images.mjs         # public/og.png, public/icon.png 생성 (prebuild)
   gen-ads-txt.mjs        # public/ads.txt 생성 (prebuild)
 src/site.config.ts       # 도메인·basePath·브랜드·광고 ID + URL 헬퍼
@@ -187,6 +192,7 @@ src/lib/
   stats.ts               # 데이터 기반 통계 (서버 전용)
   recommend.ts           # 번호 추천 엔진
   guides.ts              # 가이드 문서 메타
+  stores.ts              # 명당 집계 + 지역명 정규화
 src/components/          # UI
 src/app/                 # 라우트
 ```
@@ -205,6 +211,4 @@ src/app/                 # 라우트
 
 - **가이드 추가** — `src/lib/guides.ts` 에 항목을 넣고
   `src/app/guide/[slug]/content.tsx` 에 본문을 추가하면 sitemap까지 자동 반영
-- **당첨 판매점** — 동행복권의 당첨 판매점 데이터를 지역별 페이지로
-  (`/stores/서울`, `/stores/부산` …) 만들면 지역 검색어를 크게 가져올 수 있음
 - **연금복권 720+** — 같은 구조로 복제 가능

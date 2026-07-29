@@ -13,6 +13,7 @@ import {
   RANGE_BUCKETS,
 } from "@/lib/stats";
 import { comma, koreanDate, koreanMoney } from "@/lib/format";
+import { firstWinnersOf, purchaseLabel } from "@/lib/stores";
 import { absoluteUrl, ogImage } from "@/site.config";
 
 export function generateStaticParams() {
@@ -74,6 +75,7 @@ export default async function RoundPage({
     return r && r !== draw.round ? r : undefined;
   })();
   const types = draw.firstPrizeTypes;
+  const winners = firstWinnersOf(draw.round);
   const typeTotal = types.auto + types.manual + types.semiAuto;
 
   const crumbs = [
@@ -327,6 +329,76 @@ export default async function RoundPage({
             </div>
           </Card>
         </section>
+
+        {/* 이 회차 1등 배출 판매점 */}
+        {winners.length > 0 && (
+          <section className="mt-8">
+            <SectionTitle
+              sub={`${draw.round}회 1등 당첨 복권이 팔린 곳`}
+              href="/stores"
+              linkLabel="전국 명당 순위"
+            >
+              {draw.round}회 1등 배출 판매점
+            </SectionTitle>
+            <Card className="p-0! sm:p-0!">
+              <div className="scroll-x">
+                <table className="w-full min-w-[560px] text-sm">
+                  <caption className="sr-only">
+                    {draw.round}회 1등 배출 판매점 목록
+                  </caption>
+                  <thead>
+                    <tr className="border-b border-line text-left text-xs text-muted">
+                      <th scope="col" className="px-5 py-3 font-medium">
+                        판매점
+                      </th>
+                      <th scope="col" className="px-5 py-3 font-medium">
+                        지역
+                      </th>
+                      <th scope="col" className="px-5 py-3 text-right font-medium">
+                        구매방식
+                      </th>
+                      <th scope="col" className="px-5 py-3 text-right font-medium">
+                        누적 1등
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {winners.map((w, i) => (
+                      <tr key={`${w.store.id}-${i}`} className="hover:bg-surface-2">
+                        <th scope="row" className="px-5 py-3 text-left align-top">
+                          <span className="block font-semibold">
+                            {w.store.name}
+                          </span>
+                          <span className="mt-0.5 block text-[11px] font-normal leading-relaxed text-muted">
+                            {w.store.addr}
+                          </span>
+                        </th>
+                        <td className="px-5 py-3 align-top whitespace-nowrap text-muted">
+                          {w.store.isInternet ? (
+                            "인터넷"
+                          ) : (
+                            <Link
+                              href={`/stores/${encodeURIComponent(w.store.sido)}/${encodeURIComponent(w.store.sigungu)}`}
+                              className="hover:text-accent hover:underline"
+                            >
+                              {w.store.sido} {w.store.sigungu}
+                            </Link>
+                          )}
+                        </td>
+                        <td className="px-5 py-3 text-right align-top whitespace-nowrap text-muted">
+                          {purchaseLabel(w.type)}
+                        </td>
+                        <td className="px-5 py-3 text-right align-top tabular-nums">
+                          {w.store.first}회
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </section>
+        )}
 
         {/* 이전/다음 회차 */}
         <nav

@@ -22,6 +22,15 @@ const LINKS: { title: string; items: { href: string; label: string }[] }[] = [
     ],
   },
   {
+    title: "로또 명당",
+    items: [
+      { href: "/stores", label: "전국 명당 순위" },
+      { href: "/stores/서울", label: "서울 명당" },
+      { href: "/stores/경기", label: "경기 명당" },
+      { href: "/stores/부산", label: "부산 명당" },
+    ],
+  },
+  {
     title: "가이드",
     items: [
       { href: "/recommend", label: "번호 추천" },

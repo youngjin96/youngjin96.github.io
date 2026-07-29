@@ -5,6 +5,7 @@ const NAV = [
   { href: "/results", label: "당첨번호" },
   { href: "/stats", label: "통계" },
   { href: "/recommend", label: "번호추천" },
+  { href: "/stores", label: "명당" },
   { href: "/guide", label: "가이드" },
 ];
 
