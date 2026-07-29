@@ -8,12 +8,14 @@
  * canonical / sitemap / OG URL 이 모두 아래 값에서 나오므로 배포 전에 꼭 채워주세요.
  */
 
+// GitHub Actions 는 정의되지 않은 vars 를 빈 문자열로 넘긴다.
+// ?? 는 빈 문자열을 걸러내지 못하므로(=> new URL("") 이 터짐) 명시적으로 처리한다.
 const rawSiteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.github.io"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://example.github.io"
 ).replace(/\/+$/, "");
 
-/** 프로젝트 저장소로 배포할 때의 하위 경로. 예: "/lotto-stats" */
-const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/+$/, "");
+/** 프로젝트 저장소로 배포할 때의 하위 경로. 예: "/lottery" */
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH || "").replace(/\/+$/, "");
 
 export const siteConfig = {
   name: "로또리포트",

@@ -56,6 +56,19 @@ jobs:
           git commit -m "chore: ${LATEST}회 당첨번호 반영"
           git push
 
+      # 변수를 빠뜨리면 canonical/sitemap 이 플레이스홀더 도메인으로 나가
+      # 색인이 통째로 어긋난다. 배포 전에 여기서 끊는다.
+      - name: 배포 주소 변수 확인
+        run: |
+          if [ -z "${{ vars.NEXT_PUBLIC_SITE_URL }}" ]; then
+            echo "::error::NEXT_PUBLIC_SITE_URL 변수가 없습니다."
+            echo "Settings > Secrets and variables > Actions > Variables 탭에서 등록하세요."
+            echo "  예) NEXT_PUBLIC_SITE_URL = https://username.github.io"
+            echo "      NEXT_PUBLIC_BASE_PATH = /저장소명   (프로젝트 저장소인 경우)"
+            exit 1
+          fi
+          echo "배포 주소: ${{ vars.NEXT_PUBLIC_SITE_URL }}${{ vars.NEXT_PUBLIC_BASE_PATH }}"
+
       - name: 빌드 (정적 export)
         env:
           # ── 배포 주소 (저장소 Settings > Secrets and variables > Actions > Variables) ──
