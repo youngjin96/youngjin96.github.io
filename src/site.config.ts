@@ -31,6 +31,8 @@ export const siteConfig = {
   adsenseClientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? "",
   // 구글 서치콘솔 소유권 확인용 메타태그 값 (선택)
   googleSiteVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "",
+  // 네이버 서치어드바이저 소유권 확인용 메타태그 값 (선택)
+  naverSiteVerification: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? "",
   // GA4 측정 ID (선택)
   gaMeasurementId: process.env.NEXT_PUBLIC_GA_ID ?? "",
 } as const;

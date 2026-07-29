@@ -49,9 +49,16 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
-  ...(siteConfig.googleSiteVerification
-    ? { verification: { google: siteConfig.googleSiteVerification } }
-    : {}),
+  // 검색엔진 소유권 확인 메타태그. 값이 있는 것만 넣는다.
+  // (네이버는 전용 필드가 없어서 other 로 내보낸다 → <meta name="naver-site-verification">)
+  verification: {
+    ...(siteConfig.googleSiteVerification
+      ? { google: siteConfig.googleSiteVerification }
+      : {}),
+    ...(siteConfig.naverSiteVerification
+      ? { other: { "naver-site-verification": siteConfig.naverSiteVerification } }
+      : {}),
+  },
   formatDetection: { telephone: false },
 };
 
