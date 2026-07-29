@@ -145,6 +145,13 @@ async function main() {
   );
 
   // 없는 회차만 모아 10개 단위 청크의 중심 회차로 변환
+  // 최근 회차는 매번 다시 받아 덮어쓴다.
+  // 당첨번호는 추첨 직후 확정되지만 등수별 당첨금·판매액은 더 늦게 확정된다.
+  // 증분 수집만 하면 미확정 상태(당첨금 0)로 굳어버리므로 자가 치유 창을 둔다.
+  const REFRESH_RECENT = 4;
+  const refreshFrom = Math.max(1, latest - REFRESH_RECENT + 1);
+  for (let r = refreshFrom; r <= latest; r++) byRound.delete(r);
+
   const missing = [];
   for (let r = 1; r <= latest; r++) if (!byRound.has(r)) missing.push(r);
 
@@ -152,7 +159,9 @@ async function main() {
     console.log("이미 최신입니다. 받을 회차가 없습니다.");
     return;
   }
-  console.log(`수집 대상: ${missing.length}회차`);
+  console.log(
+    `수집 대상: ${missing.length}회차 (최근 ${REFRESH_RECENT}회차는 갱신 목적 재수집)`,
+  );
 
   // 존재하지 않는 회차를 중심으로 요청하면 빈 배열이 오므로 [6, latest-4] 로 clamp 한다.
   const maxCenter = Math.max(6, latest - 4);
@@ -189,6 +198,20 @@ async function main() {
   }
   if (gaps.length) {
     console.warn(`⚠️  회차 누락 감지: ${gaps[0]}회 부근을 확인하세요.`);
+  }
+
+  // 최신 회차의 당첨금이 아직 확정 전이면 알려준다.
+  // (다음 실행에서 REFRESH_RECENT 창에 걸려 자동으로 채워진다)
+  const newest = draws[draws.length - 1];
+  const firstPrize = newest.prizes.find((p) => p.rank === 1);
+  if (!firstPrize || (firstPrize.winners === 0 && firstPrize.total === 0)) {
+    console.warn(
+      `⚠️  ${newest.round}회 당첨금이 아직 확정 전으로 보입니다. 다음 실행에서 자동 보정됩니다.`,
+    );
+  } else {
+    console.log(
+      `${newest.round}회 확인: 1등 ${firstPrize.winners}명, ${firstPrize.perWinner.toLocaleString("ko-KR")}원`,
+    );
   }
 
   await mkdir(path.dirname(OUT), { recursive: true });

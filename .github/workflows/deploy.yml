@@ -12,7 +12,11 @@ on:
   push:
     branches: [main]
   schedule:
+    # 추첨 당일 밤 (KST 일요일 00:20) — 당첨번호를 최대한 빨리 올린다
     - cron: "20 15 * * 6"
+    # 다음 날 아침 (KST 일요일 09:00) — 이때는 등수별 당첨금이 확실히 확정된다.
+    # 수집기가 최근 4회차를 항상 다시 받으므로 미확정 데이터가 자동 보정된다.
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 permissions:
