@@ -7,6 +7,20 @@
 - **정적 export** — 서버 없이 GitHub Pages 로 배포. 현재 **1,325 페이지**
 - 런타임 DB·API 호출 없음 (데이터는 `data/draws.json` 하나)
 
+## 현재 배포
+
+| | |
+| --- | --- |
+| 사이트 | https://youngjin96.github.io/ |
+| 저장소 | `youngjin96/youngjin96.github.io` (사용자 Pages 저장소 → basePath 없음) |
+| 배포 | `main` 푸시 / 매주 토요일 추첨 후 자동 / 수동 실행 |
+| 등록된 Variables | `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`, `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` |
+
+> 사용자 Pages 저장소(`<username>.github.io`)를 쓰는 이유가 있습니다. 프로젝트
+> 저장소로 두면 사이트가 `/저장소명/` 하위에 놓이는데, **네이버 서치어드바이저는
+> 호스트 단위 URL 만 등록**을 받고 **애드센스 `ads.txt` 도 도메인 루트에서만**
+> 읽힙니다. 둘 다 하위 경로에서는 막힙니다.
+
 ## 빠른 시작
 
 ```bash
@@ -131,6 +145,7 @@ npm run update-data:full   # 1회차부터 전부 다시 수집
 
 1. [구글 서치콘솔](https://search.google.com/search-console) 속성 등록 →
    `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` 변수에 값 입력 → 재배포 → 소유권 확인
+   (네이버는 `NEXT_PUBLIC_NAVER_SITE_VERIFICATION`)
 2. 서치콘솔에서 `sitemap.xml` 제출
 3. [네이버 서치어드바이저](https://searchadvisor.naver.com) 에도 등록
    (국내 로또 검색은 네이버 비중이 큽니다)
