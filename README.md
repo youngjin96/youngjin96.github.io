@@ -134,7 +134,9 @@ npm run update-data:full   # 1회차부터 전부 다시 수집
 - `sitemap.xml` 자동 생성 (1,600 URL, 최신 회차 우선순위 상향)
 - `robots.txt` — Mediapartners-Google / AdsBot-Google 명시 허용
 - 구조화 데이터: `WebSite`, `BreadcrumbList`, `Article`, `FAQPage`
-- OG 이미지 — 최신 당첨번호가 그려진 카드를 빌드 때 `public/og.png` 로 생성
+- OG 이미지 — 회차와 무관한 고정 카드 한 장을 빌드 때 `public/og.png` 로 생성
+- 파비콘·홈화면 아이콘 — `favicon.ico`(16/32/48), `icon.png`(애플 터치),
+  `icon-192/512.png` + `manifest.json` 을 같은 스크립트가 생성
 - 내부 링크: 회차 ↔ 번호 ↔ 통계 ↔ 가이드 상호 연결
 - 전 페이지 정적 HTML + 시스템 폰트 → LCP/CLS 유리
 - 클라이언트 번들에 데이터셋 미포함 (`src/lib/patterns.ts` 로 순수 로직 분리)
@@ -183,7 +185,7 @@ data/stores.json         # 당첨 판매점 마스터 + 배출 이력 (커밋 �
 scripts/
   fetch-draws.mjs        # 동행복권 회차 수집기
   fetch-stores.mjs       # 당첨 판매점(명당) 수집기
-  gen-images.mjs         # public/og.png, public/icon.png 생성 (prebuild)
+  gen-images.mjs         # og.png, favicon.ico, 아이콘, manifest.json 생성 (prebuild)
   gen-ads-txt.mjs        # public/ads.txt 생성 (prebuild)
 src/site.config.ts       # 도메인·basePath·브랜드·광고 ID + URL 헬퍼
 src/lib/

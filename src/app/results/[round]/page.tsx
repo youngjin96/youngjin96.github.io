@@ -34,7 +34,11 @@ export async function generateMetadata({
   const nums = draw.numbers.join(", ");
 
   return {
-    title: `${draw.round}회 로또 당첨번호 (${draw.date}) - ${nums}`,
+    // 한글 검색결과는 30자 근처에서 잘린다. 정작 찾는 당첨번호가 남도록
+    // 추첨일(스니펫에 이미 나온다)을 빼고 브랜드 접미사도 붙이지 않는다.
+    title: {
+      absolute: `${draw.round}회 로또 당첨번호 ${draw.numbers.join(",")}+${draw.bonus}`,
+    },
     description: `${draw.round}회 로또 6/45 당첨번호는 ${nums}, 보너스 번호는 ${draw.bonus}입니다. 추첨일 ${koreanDate(draw.date)}. 1등 ${comma(first?.winners ?? 0)}명, 1인당 당첨금 ${koreanMoney(first?.perWinner ?? 0)}. 등수별 당첨금과 조합 분석을 확인하세요.`,
     alternates: { canonical: absoluteUrl(`/results/${draw.round}`) },
     openGraph: {

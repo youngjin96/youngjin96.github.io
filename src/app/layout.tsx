@@ -40,8 +40,13 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [ogImage.url],
   },
+  manifest: assetUrl("/manifest.json"),
   icons: {
-    icon: [{ url: assetUrl("/icon.png"), type: "image/png", sizes: "180x180" }],
+    icon: [
+      // ico 안에 16/32/48 PNG 가 들어 있다. 브라우저가 알아서 고른다.
+      { url: assetUrl("/favicon.ico"), sizes: "any" },
+      { url: assetUrl("/icon-192.png"), type: "image/png", sizes: "192x192" },
+    ],
     apple: [{ url: assetUrl("/icon.png"), sizes: "180x180" }],
   },
   robots: {
@@ -60,6 +65,10 @@ export const metadata: Metadata = {
       : {}),
   },
   formatDetection: { telephone: false },
+  // 애드센스 사이트 확인용. ads.txt 와 함께 두면 심사에서 덜 막힌다.
+  ...(siteConfig.adsenseClientId
+    ? { other: { "google-adsense-account": siteConfig.adsenseClientId } }
+    : {}),
 };
 
 export const viewport: Viewport = {

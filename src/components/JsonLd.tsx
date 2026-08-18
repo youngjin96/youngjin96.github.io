@@ -1,4 +1,4 @@
-import { absoluteUrl, siteConfig } from "@/site.config";
+import { absoluteUrl, assetUrl, ogImage, siteConfig } from "@/site.config";
 
 /** 구조화 데이터 삽입. 검색결과 리치 스니펫(FAQ, 사이트링크, 빵부스러기)용. */
 export function JsonLd({ data }: { data: object | object[] }) {
@@ -21,14 +21,6 @@ export function websiteJsonLd() {
     url: siteConfig.url,
     inLanguage: "ko-KR",
     description: siteConfig.description,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteConfig.url}/results/{round}/`,
-      },
-      "query-input": "required name=round",
-    },
   };
 }
 
@@ -77,9 +69,15 @@ export function articleJsonLd({
     description,
     inLanguage: "ko-KR",
     mainEntityOfPage: absoluteUrl(path),
+    // 구글 Article 권장 필드. 회차별 이미지는 굽지 않으므로 공용 OG 를 쓴다.
+    image: [ogImage.url],
     datePublished,
     dateModified: dateModified ?? datePublished,
     author: { "@type": "Organization", name: siteConfig.name },
-    publisher: { "@type": "Organization", name: siteConfig.name },
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      logo: { "@type": "ImageObject", url: assetUrl("/icon-512.png") },
+    },
   };
 }

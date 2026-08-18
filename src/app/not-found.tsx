@@ -1,7 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { BallRow } from "@/components/LottoBall";
 import { Card } from "@/components/ui";
 import { latestDraw } from "@/lib/draws";
+
+// noindex 는 Next 가 404 페이지에 알아서 넣으므로 제목만 손본다.
+export const metadata: Metadata = { title: "페이지를 찾을 수 없습니다" };
 
 export default function NotFound() {
   return (

@@ -46,8 +46,13 @@ next-env.d.ts
 # 빌드 시 환경변수로 생성됨
 public/ads.txt
 
+# prebuild(scripts/gen-images.mjs) 산출물
 public/og.png
 public/icon.png
+public/icon-192.png
+public/icon-512.png
+public/favicon.ico
+public/manifest.json
 
 # 정적 export 산출물
 /out
