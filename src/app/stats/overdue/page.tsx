@@ -7,13 +7,13 @@ import { JsonLd, breadcrumbJsonLd, faqJsonLd } from "@/components/JsonLd";
 import { latestDraw, totalRounds } from "@/lib/draws";
 import { carryOverStats, overdueNumbers } from "@/lib/stats";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `오래 안 나온 로또 번호 - 미출현 회차 순위 (${latestDraw.round}회 기준)`,
-  description: `${latestDraw.round}회 기준으로 각 로또 번호가 마지막으로 나온 뒤 몇 회차가 지났는지, 평균 출현 간격과 역대 최장 미출현 기록은 얼마인지 정리했습니다.`,
-  alternates: { canonical: absoluteUrl("/stats/overdue") },
-};
+  description: `${latestDraw.round}회 기준 번호별 미출현 회차 순위입니다. 평균 출현 간격과 역대 최장 미출현 기록도 함께.`,
+  path: "/stats/overdue",
+});
 
 export default function OverduePage() {
   const crumbs = [

@@ -6,15 +6,16 @@ import { AdSlot } from "@/components/AdSlot";
 import { JsonLd, breadcrumbJsonLd } from "@/components/JsonLd";
 import { draws, latestDraw, totalRounds } from "@/lib/draws";
 import { comma, koreanMoney } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 const PAGE_SIZE = 100;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `회차별 로또 당첨번호 전체 (1회~${latestDraw.round}회)`,
-  description: `로또 6/45 1회차부터 ${latestDraw.round}회차까지 모든 당첨번호를 한 페이지에서 확인하세요. 회차, 추첨일, 당첨번호 6개와 보너스 번호, 1등 당첨자 수를 정리했습니다.`,
-  alternates: { canonical: absoluteUrl("/results") },
-};
+  // 이 페이지가 실제로 보여주는 건 최근 100회차다. 그 이전은 연도별 페이지로 간다.
+  description: `로또 6/45 1회~${latestDraw.round}회 당첨번호 목록입니다. 최근 ${PAGE_SIZE}회차를 한눈에 보고, 이전 회차는 연도별로 확인하세요.`,
+  path: "/results",
+});
 
 const years = [
   ...new Set(draws.map((d) => d.date.slice(0, 4))),

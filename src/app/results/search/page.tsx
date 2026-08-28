@@ -6,13 +6,13 @@ import { JsonLd, breadcrumbJsonLd } from "@/components/JsonLd";
 import { NumberChecker, type CompactDraw } from "@/components/NumberChecker";
 import { draws, latestDraw, totalRounds } from "@/lib/draws";
 import { comma } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "내 로또 번호 당첨 확인 - 전 회차 대조",
-  description: `내가 고른 로또 번호 6개가 1회부터 ${latestDraw.round}회까지 과거 회차에서 몇 등에 해당했는지 즉시 확인합니다. 등수별 당첨 횟수와 3등 이상 당첨 회차를 함께 보여줍니다.`,
-  alternates: { canonical: absoluteUrl("/results/search") },
-};
+  description: `내가 고른 번호 6개가 1회~${latestDraw.round}회 과거 회차에서 몇 등이었는지 즉시 대조해 드립니다.`,
+  path: "/results/search",
+});
 
 // 클라이언트로 넘길 최소 데이터: [회차, 번호6, 보너스]
 const compact: CompactDraw[] = draws.map((d) => [

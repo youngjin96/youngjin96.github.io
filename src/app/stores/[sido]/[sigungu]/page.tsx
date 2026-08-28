@@ -14,7 +14,7 @@ import {
   storeDataFromRound,
 } from "@/lib/stores";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 export function generateStaticParams() {
   return allSigunguPairs.map(({ sido, sigungu }) => ({ sido, sigungu }));
@@ -36,15 +36,12 @@ export async function generateMetadata({
   const { sido, sigungu, summary } = lookup(p.sido, p.sigungu);
   if (!summary) return { title: "지역을 찾을 수 없습니다" };
 
-  return {
+  return pageMetadata({
     title: `${sido} ${sigungu} 로또 명당 - 1등 배출 판매점`,
-    description: `${sido} ${sigungu}에서 로또 1등을 배출한 판매점 ${comma(summary.storeCount)}곳입니다. 1등 총 ${comma(summary.first)}건${summary.topStore ? `, 최다 배출은 ${summary.topStore.name}(${summary.topStore.first}회)` : ""}. 주소와 전화번호를 함께 확인하세요.`,
-    alternates: {
-      canonical: absoluteUrl(
-        `/stores/${encodeURIComponent(sido)}/${encodeURIComponent(sigungu)}`,
-      ),
-    },
-  };
+    // 판매점 이름은 길이를 예측할 수 없어 설명문에 넣지 않는다 (80자 유지).
+    description: `${sido} ${sigungu}에서 로또 1등을 배출한 판매점 ${comma(summary.storeCount)}곳입니다. 1등 총 ${comma(summary.first)}건, 주소와 전화번호도 함께.`,
+    path: `/stores/${encodeURIComponent(sido)}/${encodeURIComponent(sigungu)}`,
+  });
 }
 
 export default async function SigunguPage({

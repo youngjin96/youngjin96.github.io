@@ -13,13 +13,13 @@ import {
   RANGE_BUCKETS,
 } from "@/lib/stats";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `로또 번호별 출현 횟수 - 많이 나온 번호 순위 (1~${latestDraw.round}회)`,
-  description: `1회부터 ${latestDraw.round}회까지 로또 6/45 번호 1~45번이 각각 몇 번 나왔는지 순위별로 정리했습니다. 최근 50회·100회 기준 출현 횟수와 구간별 분포도 함께 확인하세요.`,
-  alternates: { canonical: absoluteUrl("/stats/frequency") },
-};
+  description: `1회~${latestDraw.round}회 로또 번호 1~45번의 출현 횟수 순위입니다. 최근 50·100회 기준과 구간별 분포도 함께.`,
+  path: "/stats/frequency",
+});
 
 const FAQS = [
   {

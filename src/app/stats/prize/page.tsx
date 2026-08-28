@@ -4,16 +4,17 @@ import { BallRow } from "@/components/LottoBall";
 import { Bar, Breadcrumbs, Card, Prose, SectionTitle, Stat } from "@/components/ui";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd, breadcrumbJsonLd, faqJsonLd } from "@/components/JsonLd";
-import { draws, latestDraw, totalRounds } from "@/lib/draws";
+import { draws, latestDraw } from "@/lib/draws";
 import { firstPrize, prizeStats, yearlyStats } from "@/lib/stats";
 import { comma, koreanDate, koreanMoney } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "로또 당첨금 통계 - 역대 1등 당첨금 순위와 판매액 추이",
-  description: `역대 로또 1등 최고 당첨금은 얼마였을까요? ${comma(totalRounds)}개 회차의 1등 당첨금·당첨자 수 순위, 연도별 판매액 추이, 자동/수동 1등 비율을 정리했습니다.`,
-  alternates: { canonical: absoluteUrl("/stats/prize") },
-};
+  description:
+    "역대 로또 1등 최고 당첨금과 당첨자 수 순위, 연도별 판매액 추이, 자동·수동 1등 비율을 정리했습니다.",
+  path: "/stats/prize",
+});
 
 export default function PrizePage() {
   const crumbs = [

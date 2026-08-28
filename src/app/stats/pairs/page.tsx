@@ -7,13 +7,13 @@ import { JsonLd, breadcrumbJsonLd, faqJsonLd } from "@/components/JsonLd";
 import { latestDraw, totalRounds } from "@/lib/draws";
 import { ALL_NUMBERS, bestPartners, topPairs } from "@/lib/stats";
 import { comma } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `로또 궁합수 - 함께 자주 나온 번호 조합 순위`,
-  description: `1회부터 ${latestDraw.round}회까지 같은 회차에 함께 나온 로또 번호쌍을 집계했습니다. 궁합수 TOP 30과 1~45번 각각의 최고 궁합 번호를 확인하세요.`,
-  alternates: { canonical: absoluteUrl("/stats/pairs") },
-};
+  description: `1회~${latestDraw.round}회 같은 회차에 함께 나온 로또 번호쌍 집계입니다. 궁합수 TOP 30과 번호별 최고 궁합수.`,
+  path: "/stats/pairs",
+});
 
 export default function PairsPage() {
   const crumbs = [

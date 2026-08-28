@@ -7,7 +7,7 @@ import { AdSlot } from "@/components/AdSlot";
 import { JsonLd, breadcrumbJsonLd } from "@/components/JsonLd";
 import { draws } from "@/lib/draws";
 import { comma, koreanMoney } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 const YEARS = [...new Set(draws.map((d) => d.date.slice(0, 4)))].sort();
 
@@ -28,11 +28,11 @@ export async function generateMetadata({
   const list = drawsOfYear(year);
   if (!list.length) return { title: "연도를 찾을 수 없습니다" };
 
-  return {
+  return pageMetadata({
     title: `${year}년 로또 당첨번호 전체 (${list[0].round}회~${list[list.length - 1].round}회)`,
-    description: `${year}년에 추첨한 로또 6/45 ${list.length}개 회차의 당첨번호와 1등 당첨자 수, 당첨금을 회차 순으로 정리했습니다.`,
-    alternates: { canonical: absoluteUrl(`/results/year/${year}`) },
-  };
+    description: `${year}년에 추첨한 로또 ${list.length}개 회차의 당첨번호와 1등 당첨자 수, 당첨금을 정리했습니다.`,
+    path: `/results/year/${year}`,
+  });
 }
 
 export default async function YearPage({

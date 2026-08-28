@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, Card, Prose } from "@/components/ui";
 import { JsonLd, breadcrumbJsonLd } from "@/components/JsonLd";
-import { absoluteUrl, siteConfig } from "@/site.config";
+import { siteConfig, pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "개인정보처리방침",
   description: `${siteConfig.name}의 개인정보처리방침입니다. 수집하는 정보, 쿠키와 광고 사용, 제3자 제공에 대해 안내합니다.`,
-  alternates: { canonical: absoluteUrl("/privacy") },
-  robots: { index: true, follow: true },
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   const crumbs = [{ name: "홈", href: "/" }, { name: "개인정보처리방침" }];

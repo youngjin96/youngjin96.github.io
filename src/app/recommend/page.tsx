@@ -9,15 +9,15 @@ import { latestDraw, nextDrawDate, totalRounds } from "@/lib/draws";
 import { hotNumbers, numberSummaries, overdueNumbers } from "@/lib/stats";
 import { STRATEGIES, weeklyPicks, weeklyStrategyLabels } from "@/lib/recommend";
 import { comma, koreanDate } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 const next = nextDrawDate();
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `로또 번호 추천 - ${next.round}회 통계 기반 자동 번호 생성기`,
-  description: `${comma(totalRounds)}회차 당첨 통계를 바탕으로 로또 번호를 자동으로 뽑아드립니다. 많이 나온 번호, 오래 안 나온 번호, 통계 밸런스 등 5가지 방식과 고정수·제외수 설정을 지원합니다. 회원가입 없이 무료로 이용하세요.`,
-  alternates: { canonical: absoluteUrl("/recommend") },
-};
+  description: `${comma(totalRounds)}회차 당첨 통계로 로또 번호를 자동 생성합니다. 5가지 방식과 고정수·제외수 설정, 무료 이용.`,
+  path: "/recommend",
+});
 
 const FAQS = [
   {

@@ -15,7 +15,16 @@ import {
   totalFirstWins,
 } from "@/lib/stores";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
+
+/**
+ * 시도 페이지에 실을 판매점 수 상한.
+ *
+ * 경기처럼 1등 배출 판매점이 1,100곳 넘는 시도는 표를 통째로 그리면 HTML 이
+ * 2MB 를 넘어 모바일 렌더링과 크롤링에 부담이 된다. 잘려나간 판매점은 전부
+ * 아래 시·군·구 페이지에 그대로 있으므로 색인되는 내용은 줄지 않는다.
+ */
+const TOP_LIMIT = 100;
 
 export function generateStaticParams() {
   return sidoNames.map((sido) => ({ sido }));
@@ -31,11 +40,12 @@ export async function generateMetadata({
   const summary = sidoList.find((s) => s.name === name);
   if (!summary) return { title: "지역을 찾을 수 없습니다" };
 
-  return {
+  return pageMetadata({
     title: `${name} 로또 명당 - 1등 배출 판매점 순위`,
-    description: `${name} 지역에서 로또 1등을 배출한 판매점 ${comma(summary.storeCount)}곳의 순위입니다. 1등 총 ${comma(summary.first)}건${summary.topStore ? `, 최다 배출은 ${summary.topStore.name}(${summary.topStore.first}회)` : ""}. 시·군·구별로도 확인하세요.`,
-    alternates: { canonical: absoluteUrl(`/stores/${encodeURIComponent(name)}`) },
-  };
+    // 판매점 이름은 길이를 예측할 수 없어 설명문에 넣지 않는다 (80자 유지).
+    description: `${name}에서 로또 1등을 배출한 판매점 ${comma(summary.storeCount)}곳의 순위입니다. 1등 총 ${comma(summary.first)}건, 시·군·구별로도 확인하세요.`,
+    path: `/stores/${encodeURIComponent(name)}`,
+  });
 }
 
 export default async function SidoPage({ params }: PageProps<"/stores/[sido]">) {
@@ -45,6 +55,8 @@ export default async function SidoPage({ params }: PageProps<"/stores/[sido]">) 
   if (!summary) notFound();
 
   const ranked = rankedInSido(name);
+  const listed = ranked.slice(0, TOP_LIMIT);
+  const hidden = ranked.length - listed.length;
   const districts = sigunguList(name).filter((d) => d.first > 0);
   const share = totalFirstWins ? (summary.first / totalFirstWins) * 100 : 0;
   const rank = sidoList.findIndex((s) => s.name === name) + 1;
@@ -95,7 +107,7 @@ export default async function SidoPage({ params }: PageProps<"/stores/[sido]">) 
       <AdSlot slot={process.env.NEXT_PUBLIC_AD_SLOT_TOP} />
 
       {districts.length > 1 && (
-        <section className="mt-6">
+        <section id="sigungu" className="mt-6 scroll-mt-20">
           <SectionTitle sub="시·군·구를 선택하면 더 자세히 볼 수 있습니다">
             {name} 시·군·구별 1등 배출
           </SectionTitle>
@@ -118,12 +130,34 @@ export default async function SidoPage({ params }: PageProps<"/stores/[sido]">) 
       )}
 
       <section className="mt-8">
-        <SectionTitle sub={`1등 배출 횟수 기준 ${name} 전체 순위`}>
-          {name} 명당 순위
+        <SectionTitle
+          sub={
+            hidden
+              ? `1등 배출 횟수 기준 상위 ${TOP_LIMIT}곳 (전체 ${comma(ranked.length)}곳)`
+              : `1등 배출 횟수 기준 ${name} 전체 순위`
+          }
+        >
+          {name} 명당 {hidden ? `TOP ${TOP_LIMIT}` : "순위"}
         </SectionTitle>
         <Card className="p-0! sm:p-0!">
-          <StoreTable stores={ranked} />
+          <StoreTable stores={listed} />
         </Card>
+        {hidden > 0 && (
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            {TOP_LIMIT + 1}위 아래 {comma(hidden)}곳은{" "}
+            {districts.length > 1 ? (
+              <>
+                위의{" "}
+                <a href="#sigungu" className="text-accent hover:underline">
+                  시·군·구별 목록
+                </a>
+                에서 지역을 골라 확인할 수 있습니다.
+              </>
+            ) : (
+              "시·군·구별 페이지에서 확인할 수 있습니다."
+            )}
+          </p>
+        )}
       </section>
 
       <AdSlot slot={process.env.NEXT_PUBLIC_AD_SLOT_MID} />

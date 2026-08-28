@@ -4,13 +4,13 @@ import { Breadcrumbs, Card, Prose } from "@/components/ui";
 import { JsonLd, breadcrumbJsonLd } from "@/components/JsonLd";
 import { firstDraw, latestDraw, totalRounds } from "@/lib/draws";
 import { comma } from "@/lib/format";
-import { absoluteUrl, siteConfig } from "@/site.config";
+import { siteConfig, pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "사이트 소개",
-  description: `${siteConfig.name}는 동행복권이 공개한 로또 6/45 회차별 당첨번호를 정리해 통계로 보여주는 비공식 정보 사이트입니다. 데이터 출처와 갱신 주기, 운영 원칙을 안내합니다.`,
-  alternates: { canonical: absoluteUrl("/about") },
-};
+  description: `${siteConfig.name}는 동행복권이 공개한 당첨번호를 정리해 보여주는 비공식 통계 사이트입니다. 출처와 갱신 주기 안내.`,
+  path: "/about",
+});
 
 export default function AboutPage() {
   const crumbs = [{ name: "홈", href: "/" }, { name: "사이트 소개" }];

@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 /**
  * 사이트 전역 설정.
  *
@@ -21,8 +23,10 @@ export const siteConfig = {
   name: "로또리포트",
   shortName: "로또리포트",
   title: "로또리포트 - 로또 6/45 당첨번호 통계와 번호 추천",
+  // 네이버 서치어드바이저는 설명문을 80자 이내로 쓰길 권장한다.
+  // 이 파일과 각 페이지의 description 은 모두 그 기준에 맞춰져 있다.
   description:
-    "1회차부터 최신 회차까지 로또 6/45 당첨번호를 모두 모아 번호별 출현 횟수, 미출현 기간, 궁합수, 홀짝·합계 패턴을 분석합니다. 통계 기반 번호 추천도 무료로 제공합니다.",
+    "로또 6/45 전 회차 당첨번호와 번호별 출현 횟수·미출현 기간·궁합수 통계, 무료 번호 추천을 제공합니다.",
   /** basePath 를 포함한 사이트 루트 URL (뒤에 / 없음) */
   url: `${rawSiteUrl}${basePath}`,
   basePath,
@@ -75,3 +79,79 @@ export const ogImage = {
 } as const;
 
 export type SiteConfig = typeof siteConfig;
+
+type PageMetadataInput = {
+  /** <title> 문구. 기본적으로 뒤에 " | 로또리포트" 가 붙는다. */
+  title: string;
+  /** 80자 이내로 쓴다 (네이버 서치어드바이저 권장). */
+  description: string;
+  /** 사이트 루트 기준 경로. 예: "/stats/frequency" */
+  path: string;
+  /** 브랜드 접미사 없이 title 을 그대로 쓴다 (검색결과에서 잘리는 걸 막을 때). */
+  bareTitle?: boolean;
+  /** SNS 카드 제목. 생략하면 title 을 쓴다. */
+  ogTitle?: string;
+  /** SNS 카드 설명. 생략하면 description 을 쓴다. */
+  ogDescription?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+};
+
+/**
+ * 페이지 메타데이터를 한 번에 만든다.
+ *
+ * Next.js 는 openGraph 를 필드 단위로 병합하지 않고 세그먼트 단위로 통째로
+ * 덮어쓴다. 그래서 페이지가 openGraph 를 정의하지 않으면 레이아웃 값이 그대로
+ * 남아 og:url 에 홈 주소가, og:title 에 사이트 기본 제목이 박힌다.
+ * (카카오톡·페이스북 공유 카드가 전부 홈으로 보이는 원인)
+ *
+ * 페이지마다 openGraph/twitter 를 손으로 채우는 대신 이 함수를 쓴다.
+ */
+export function pageMetadata({
+  title,
+  description,
+  path,
+  bareTitle,
+  ogTitle,
+  ogDescription,
+  publishedTime,
+  modifiedTime,
+}: PageMetadataInput): Metadata {
+  const url = absoluteUrl(path);
+  // og:site_name 이 이미 브랜드를 담고 있어 카드 제목에는 접미사를 붙이지 않는다.
+  const cardTitle = ogTitle ?? title;
+  const cardDescription = ogDescription ?? description;
+
+  return {
+    title: bareTitle ? { absolute: title } : title,
+    description,
+    alternates: { canonical: url },
+    openGraph: publishedTime
+      ? {
+          type: "article",
+          locale: siteConfig.locale,
+          url,
+          siteName: siteConfig.name,
+          title: cardTitle,
+          description: cardDescription,
+          images: [ogImage],
+          publishedTime,
+          modifiedTime: modifiedTime ?? publishedTime,
+        }
+      : {
+          type: "website",
+          locale: siteConfig.locale,
+          url,
+          siteName: siteConfig.name,
+          title: cardTitle,
+          description: cardDescription,
+          images: [ogImage],
+        },
+    twitter: {
+      card: "summary_large_image",
+      title: cardTitle,
+      description: cardDescription,
+      images: [ogImage.url],
+    },
+  };
+}

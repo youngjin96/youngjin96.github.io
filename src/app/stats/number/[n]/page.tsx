@@ -13,7 +13,7 @@ import {
   worstPartners,
 } from "@/lib/stats";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 export function generateStaticParams() {
   return ALL_NUMBERS.map((n) => ({ n: String(n) }));
@@ -28,11 +28,11 @@ export async function generateMetadata({
   const s = getNumberStat(Number(n));
   if (!s) return { title: "번호를 찾을 수 없습니다" };
 
-  return {
+  return pageMetadata({
     title: `로또 ${s.number}번 통계 - 출현 횟수 ${s.count}회, 최근 ${s.lastRound}회`,
-    description: `로또 6/45 ${s.number}번은 1회부터 ${latestDraw.round}회까지 ${s.count}회 나와 출현 순위 ${s.rank}위입니다. 마지막 출현은 ${s.lastRound}회이며 평균 출현 간격은 ${s.avgGap.toFixed(1)}회입니다. ${s.number}번과 함께 자주 나온 궁합수도 확인하세요.`,
-    alternates: { canonical: absoluteUrl(`/stats/number/${s.number}`) },
-  };
+    description: `로또 ${s.number}번은 1회~${latestDraw.round}회 ${s.count}회 출현해 ${s.rank}위입니다. 마지막 출현 ${s.lastRound}회, 평균 간격 ${s.avgGap.toFixed(1)}회.`,
+    path: `/stats/number/${s.number}`,
+  });
 }
 
 export default async function NumberPage({

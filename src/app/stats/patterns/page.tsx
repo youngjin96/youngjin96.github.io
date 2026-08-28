@@ -6,13 +6,13 @@ import { JsonLd, breadcrumbJsonLd, faqJsonLd } from "@/components/JsonLd";
 import { latestDraw, totalRounds } from "@/lib/draws";
 import { analyzeDraw, patternStats, RANGE_BUCKETS } from "@/lib/stats";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "로또 조합 패턴 분석 - 홀짝·합계·AC값·연속번호 통계",
-  description: `역대 로또 6/45 ${comma(totalRounds)}개 당첨 조합의 홀짝 비율, 저고 비율, 번호 합계 분포, AC값, 연속번호 출현 빈도를 분석했습니다. 어떤 조합 형태가 실제로 자주 나왔는지 확인하세요.`,
-  alternates: { canonical: absoluteUrl("/stats/patterns") },
-};
+  description: `역대 로또 당첨 조합 ${comma(totalRounds)}개의 홀짝·저고 비율, 번호 합계 분포, AC값, 연속번호 빈도를 분석했습니다.`,
+  path: "/stats/patterns",
+});
 
 function DistList({
   rows,

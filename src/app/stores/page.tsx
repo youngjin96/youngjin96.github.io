@@ -17,13 +17,13 @@ import {
   totalSecondWins,
 } from "@/lib/stores";
 import { comma, pct } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "로또 명당 - 1등 배출 판매점 전국 순위",
-  description: `로또 6/45 1등을 가장 많이 배출한 판매점 순위입니다. ${storeDataFromRound}회부터 ${latestDraw.round}회까지 1등 ${comma(totalFirstWins)}건의 배출 판매점을 지역별로 정리했습니다. 우리 동네 명당도 찾아보세요.`,
-  alternates: { canonical: absoluteUrl("/stores") },
-};
+  description: `로또 1등을 가장 많이 배출한 판매점 전국 순위입니다. ${storeDataFromRound}회~${latestDraw.round}회 1등 ${comma(totalFirstWins)}건을 지역별로 정리.`,
+  path: "/stores",
+});
 
 const FAQS = [
   {

@@ -11,7 +11,7 @@ import {
 } from "@/components/JsonLd";
 import { getGuide, guides } from "@/lib/guides";
 import { guideContents } from "./content";
-import { absoluteUrl, ogImage } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 export function generateStaticParams() {
   return guides.map((g) => ({ slug: g.slug }));
@@ -26,20 +26,12 @@ export async function generateMetadata({
   const guide = getGuide(slug);
   if (!guide) return { title: "문서를 찾을 수 없습니다" };
 
-  return {
+  return pageMetadata({
     title: guide.title,
     description: guide.description,
-    alternates: { canonical: absoluteUrl(`/guide/${guide.slug}`) },
-    openGraph: {
-      type: "article",
-      title: guide.title,
-      description: guide.description,
-      url: absoluteUrl(`/guide/${guide.slug}`),
-      images: [ogImage],
-      publishedTime: guide.updated,
-      modifiedTime: guide.updated,
-    },
-  };
+    path: `/guide/${guide.slug}`,
+    publishedTime: guide.updated,
+  });
 }
 
 export default async function GuidePage({ params }: PageProps<"/guide/[slug]">) {

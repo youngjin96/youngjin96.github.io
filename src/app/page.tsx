@@ -15,13 +15,13 @@ import {
 } from "@/lib/stats";
 import { weeklyPicks, weeklyStrategyLabels } from "@/lib/recommend";
 import { comma, koreanDate, koreanMoney } from "@/lib/format";
-import { absoluteUrl, siteConfig } from "@/site.config";
+import { siteConfig, pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `${latestDraw.round}회 로또 당첨번호 및 전 회차 통계`,
-  description: `${latestDraw.round}회 로또 6/45 당첨번호는 ${latestDraw.numbers.join(", ")} + 보너스 ${latestDraw.bonus}입니다. 1회부터 ${latestDraw.round}회까지 ${comma(totalRounds)}회차를 분석한 번호별 출현 횟수, 미출현 기간, 궁합수 통계와 무료 번호 추천을 제공합니다.`,
-  alternates: { canonical: absoluteUrl("/") },
-};
+  description: `${latestDraw.round}회 로또 당첨번호는 ${latestDraw.numbers.join(", ")} + 보너스 ${latestDraw.bonus}. 전 회차 통계와 무료 번호 추천도 함께 제공합니다.`,
+  path: "/",
+});
 
 const FAQS = [
   {

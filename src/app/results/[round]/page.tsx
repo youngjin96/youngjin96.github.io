@@ -14,7 +14,7 @@ import {
 } from "@/lib/stats";
 import { comma, koreanDate, koreanMoney } from "@/lib/format";
 import { firstWinnersOf, purchaseLabel } from "@/lib/stores";
-import { absoluteUrl, ogImage } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
 export function generateStaticParams() {
   return draws.map((d) => ({ round: String(d.round) }));
@@ -32,23 +32,22 @@ export async function generateMetadata({
 
   const first = draw.prizes.find((p) => p.rank === 1);
   const nums = draw.numbers.join(", ");
+  const firstPrize =
+    first && first.winners > 0
+      ? `1등 ${comma(first.winners)}명, 1인당 ${koreanMoney(first.perWinner)}.`
+      : "1등 당첨자는 나오지 않았습니다.";
 
-  return {
+  return pageMetadata({
     // 한글 검색결과는 30자 근처에서 잘린다. 정작 찾는 당첨번호가 남도록
-    // 추첨일(스니펫에 이미 나온다)을 빼고 브랜드 접미사도 붙이지 않는다.
-    title: {
-      absolute: `${draw.round}회 로또 당첨번호 ${draw.numbers.join(",")}+${draw.bonus}`,
-    },
-    description: `${draw.round}회 로또 6/45 당첨번호는 ${nums}, 보너스 번호는 ${draw.bonus}입니다. 추첨일 ${koreanDate(draw.date)}. 1등 ${comma(first?.winners ?? 0)}명, 1인당 당첨금 ${koreanMoney(first?.perWinner ?? 0)}. 등수별 당첨금과 조합 분석을 확인하세요.`,
-    alternates: { canonical: absoluteUrl(`/results/${draw.round}`) },
-    openGraph: {
-      type: "article",
-      title: `${draw.round}회 로또 당첨번호 - ${nums} + ${draw.bonus}`,
-      description: `추첨일 ${koreanDate(draw.date)} · 1등 ${comma(first?.winners ?? 0)}명 · ${koreanMoney(first?.perWinner ?? 0)}`,
-      url: absoluteUrl(`/results/${draw.round}`),
-      images: [ogImage],
-    },
-  };
+    // 브랜드 접미사를 붙이지 않는다.
+    bareTitle: true,
+    title: `${draw.round}회 로또 당첨번호 ${draw.numbers.join(",")}+${draw.bonus}`,
+    description: `${draw.round}회 로또 당첨번호는 ${nums}, 보너스 ${draw.bonus}입니다. ${firstPrize}`,
+    path: `/results/${draw.round}`,
+    ogTitle: `${draw.round}회 로또 당첨번호 - ${nums} + ${draw.bonus}`,
+    ogDescription: `추첨일 ${koreanDate(draw.date)} · ${firstPrize}`,
+    publishedTime: `${draw.date}T20:45:00+09:00`,
+  });
 }
 
 const RANK_LABEL: Record<number, string> = {

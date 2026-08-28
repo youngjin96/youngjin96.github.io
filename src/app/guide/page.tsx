@@ -4,14 +4,14 @@ import { Breadcrumbs, Card } from "@/components/ui";
 import { AdSlot } from "@/components/AdSlot";
 import { JsonLd, breadcrumbJsonLd } from "@/components/JsonLd";
 import { guides } from "@/lib/guides";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "로또 가이드 - 확률, 당첨금 수령, 세금, 구매 방법",
   description:
-    "로또 6/45를 처음 사는 사람부터 당첨된 사람까지 필요한 정보를 정리했습니다. 등수별 당첨 확률, 당첨금 수령 절차와 준비물, 세금 계산, 구매 방법과 흔한 오해를 다룹니다.",
-  alternates: { canonical: absoluteUrl("/guide") },
-};
+    "로또 6/45 등수별 당첨 확률, 당첨금 수령 절차와 세금, 구매 방법과 흔한 오해를 정리한 가이드입니다.",
+  path: "/guide",
+});
 
 export default function GuideIndexPage() {
   const crumbs = [{ name: "홈", href: "/" }, { name: "가이드" }];

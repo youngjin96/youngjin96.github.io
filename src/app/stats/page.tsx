@@ -15,13 +15,13 @@ import {
   prizeStats,
 } from "@/lib/stats";
 import { comma, koreanMoney } from "@/lib/format";
-import { absoluteUrl } from "@/site.config";
+import { pageMetadata } from "@/site.config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `로또 통계 종합 - 1회~${latestDraw.round}회 전체 분석`,
-  description: `로또 6/45 ${comma(totalRounds)}회차 데이터를 번호별 출현 횟수, 미출현 기간, 궁합수, 홀짝·합계·AC값 패턴, 당첨금 흐름까지 항목별로 분석했습니다.`,
-  alternates: { canonical: absoluteUrl("/stats") },
-};
+  description: `로또 6/45 ${comma(totalRounds)}회차 데이터를 출현 횟수·미출현 기간·궁합수·조합 패턴·당첨금까지 분석했습니다.`,
+  path: "/stats",
+});
 
 const SECTIONS = [
   {
