@@ -102,6 +102,7 @@ jobs:
           test -f out/404.html   || { echo "out/404.html 없음 — Pages 404 처리 불가"; exit 1; }
           test -f out/.nojekyll  || { echo "out/.nojekyll 없음 — _next 폴더가 무시됨"; exit 1; }
           test -f out/og.png     || { echo "out/og.png 없음 — 공유 미리보기 깨짐"; exit 1; }
+          test -f out/CNAME      || { echo "out/CNAME 없음 — 커스텀 도메인이 풀림"; exit 1; }
           test -s out/sitemap.xml || { echo "sitemap.xml 비어 있음"; exit 1; }
           echo "HTML $(find out -name '*.html' | wc -l)개 / sitemap $(grep -c '<url>' out/sitemap.xml)개 URL"
 
