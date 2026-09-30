@@ -44,6 +44,20 @@ function normalizeSido(sido: string, sigungu: string): string {
   return sido;
 }
 
+/**
+ * 주소에서 시군구를 뽑는다. 예: "경기 수원시 권선구 …" → "수원시 권선구"
+ *
+ * 동행복권 API 가 시군구 필드(tm2ShpLctnAddr)를 더 이상 내려주지 않아,
+ * 수집기가 판매점을 갱신할 때마다 sigungu 가 빈 값으로 덮인다.
+ * 그대로 두면 서울 판매점이 전부 "서울/서울" 같은 없는 지역으로 묶이므로
+ * 주소의 둘째(·셋째) 토큰으로 되살린다.
+ */
+function sigunguFromAddr(addr: string): string {
+  const [, a = "", b = ""] = addr.split(" ");
+  if (!/[시군구]$/.test(a)) return "";
+  return a.endsWith("시") && b.endsWith("구") ? `${a} ${b}` : a;
+}
+
 /** 세종특별자치시처럼 시군구가 없는 곳은 시도명을 그대로 쓴다. */
 function normalizeSigungu(sido: string, sigungu: string): string {
   return sigungu || sido;
@@ -74,11 +88,12 @@ export type Store = {
 };
 
 const stores: Store[] = data.stores.map((s) => {
-  const sido = normalizeSido(s.sido, s.sigungu);
+  const rawSigungu = s.sigungu || sigunguFromAddr(s.addr);
+  const sido = normalizeSido(s.sido, rawSigungu);
   return {
     ...s,
     sido,
-    sigungu: normalizeSigungu(sido, s.sigungu),
+    sigungu: normalizeSigungu(sido, rawSigungu),
     first: 0,
     second: 0,
     firstRounds: [],
