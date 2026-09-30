@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import type { Metadata } from "next";
 import { Breadcrumbs, Card } from "@/components/ui";
 import { AdSlot } from "@/components/AdSlot";

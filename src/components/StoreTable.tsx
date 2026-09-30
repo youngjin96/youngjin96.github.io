@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import type { Store } from "@/lib/stores";
 import { getDraw } from "@/lib/draws";
 

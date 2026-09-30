@@ -3,8 +3,8 @@ import { ballColor } from "@/lib/patterns";
 const COLOR_CLASS: Record<ReturnType<typeof ballColor>, string> = {
   yellow: "bg-ball-yellow text-black/80",
   blue: "bg-ball-blue text-black/80",
-  red: "bg-ball-red text-white",
-  gray: "bg-ball-gray text-white",
+  red: "bg-ball-red text-black/80",
+  gray: "bg-ball-gray text-black/80",
   green: "bg-ball-green text-black/80",
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { LottoBall } from "@/components/LottoBall";
 
 /** [회차, n1..n6, 보너스] 압축 배열 */

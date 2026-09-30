@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import type { ReactNode } from "react";
 
 export function Card({
@@ -65,7 +65,7 @@ export function Stat({
     <div className="rounded-xl border border-line bg-surface-2 px-4 py-3">
       <dt className="text-xs text-muted">{label}</dt>
       <dd className="mt-1 text-lg font-bold tabular-nums sm:text-xl">{value}</dd>
-      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+      {hint && <dd className="mt-0.5 text-xs text-muted">{hint}</dd>}
     </div>
   );
 }
